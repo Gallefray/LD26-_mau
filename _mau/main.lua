@@ -76,6 +76,7 @@ function variables()
 	walls = {}
 	wallSize = 16
 	mushes = {}
+	orbs = {}
 end
 
 function drawEnts()
@@ -131,13 +132,14 @@ function logic(dt)
 				player.jump = false
 			end
 		end
+		-- Some more Wall Collisions:
 		if player.y+player.size >= wall[2] and player.y < wall[2]+wallSize then
-			print("woo wooo woo")
+			-- print("woo wooo woo")
 			if player.x+player.size >= wall[1] and player.x+player.size < wall[1]+wallSize then
-				print("BOOYAH!!!")
+				-- print("BOOYAH!!!")
 				player.x = player.x - player.speed * dt
 			elseif player.x <= wall[1]+wallSize+1 and player.x > wall[1] then
-				print("NOM NOM NOM NOM NOM NOM ")
+				-- print("NOM NOM NOM NOM NOM NOM ")
 				player.x = player.x + player.speed * dt
 			end
 		end
