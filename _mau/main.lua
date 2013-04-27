@@ -1,38 +1,60 @@
+require "editor"
+
 function resources()
 end
 
 function love.load()
 	variables()
+	editorLoad()
 end
 
 function love.update(dt)
-	if love.keyboard.isDown("escape") then
-		love.event.quit()
-	end
-	if love.keyboard.isDown("left") then
-		player.x = player.x - player.speed * dt
-		player.dir = "left"
-	elseif love.keyboard.isDown("right") then 
-		player.x = player.x + player.speed * dt
-		player.dir = "right"
-	end
-	if love.keyboard.isDown("s") then
-		if player.touchesGround == true then
-			player.jump = true
+	if level == 1 then
+		if love.keyboard.isDown("escape") then
+			love.event.quit()
 		end
-	end
+		if love.keyboard.isDown("left") then
+			player.x = player.x - player.speed * dt
+			player.dir = "left"
+			player.left = true
+			player.right = false
+		elseif love.keyboard.isDown("right") then 
+			player.x = player.x + player.speed * dt
+			player.right = true
+			player.left = false
+		else
+			player.left = false
+			player.right = false
+		end
+		if love.keyboard.isDown("s") then
+			if player.touchesGround == true then
+				player.jump = true
+			end
+		end
 
-	logic(dt)
+		logic(dt)
+	elseif level == -0 then
+		editorUpdate(dt)
+	end
 end
 
 function love.draw()
+	love.graphics.translate(screen.transX, screen.transY)
 	love.graphics.scale(screen.scale, screen.scale)
-	drawEnts()
+	if level == -0 then
+		editorDraw()
+	elseif level == 1 then
+		drawEnts()
+	end
 end
 
 function variables()
+	level = -0
+
 	screen = {}
 	screen.scale = 2.5
+	screen.transX = 0
+	screen.transY = 0
 	screen.w = 800/screen.scale
 	screen.h = 600/screen.scale
 
@@ -46,9 +68,10 @@ function variables()
 	player.jumpSpeed = 70
 	player.currentJumpSpeed = player.maxJumpSpeed
 	player.touchesGround = true
-	player.dir = "neutral"
+	player.right = false
+	player.left = false
 
-	walls = {{screen.w/2, screen.h/2+16}, {screen.w/2-16, screen.h/2+16}, {screen.w/2-16, screen.h/2+16}, {screen.w/2+32, screen.h/2+64}, {screen.w/2-32, screen.h/2+16}}
+	walls = {}
 	wallSize = 16
 	mushes = {}
 end
@@ -70,14 +93,24 @@ function drawEnts()
 end
 
 function logic(dt)
-	for each, wall in pairs(walls) do 
-		-- Gravity Stuff:
+	for each, wall in pairs(walls) do
 		if wall[1] <= player.x+player.size and wall[1]+wallSize >= player.x then
+			-- Gravity Stuff:
 			if player.y <= wall[2]+wallSize and player.y+player.size >= wall[2]-1 then
 				player.touchesGround = true
 				player.jumpCount = 0
 			elseif player.y < wall[2] then
 				player.touchesGround = false
+			end
+
+		-- Wall Collisions: 
+			if player.y <= wall[2]+wallSize and player.y >= wall[2] then
+				player.jump = false
+			end
+		end
+		if player.y+player.size >= wall[2] and player.y < wall[2]+wallSize then
+			if player.x+player.size <= wall[1]-1 and player.x+player.size >= wall[1]+5 then
+				player.x = player.x - player.speed * dt
 			end
 		end
 	end
