@@ -68,15 +68,18 @@ function variables()
 	player.jump = false
 	player.jumpCount = 0
 	player.jumpSpeed = 70
-	-- player.currentJumpSpeed = player.maxJumpSpeed
 	player.touchesGround = true
 	player.right = false
 	player.left = false
 
 	walls = {}
+	bullets = {}
 	wallSize = 16
 	mushes = {}
 	orbs = {}
+	ash = {}
+	ash.x = 0
+	ash.y = 0
 end
 
 function drawEnts()
@@ -99,7 +102,6 @@ function resetEnts()
 	player.jump = false
 	player.jumpCount = 0
 	player.jumpSpeed = 70
-	-- player.currentJumpSpeed = player.maxJumpSpeed
 	player.touchesGround = true
 	player.right = false
 	player.left = false
@@ -143,6 +145,10 @@ function logic(dt)
 				player.x = player.x + player.speed * dt
 			end
 		end
+	end
+
+	for each, mush in pairs(mushes) do
+		
 	end
 
 	-- More Gravity Stuff
