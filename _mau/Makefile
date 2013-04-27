@@ -1,0 +1,2 @@
+build: 
+	love ../_mau
