@@ -44,12 +44,14 @@ function love.draw()
 	if level == -0 then
 		editorDraw()
 	elseif level == 1 then
+		loadEnt()
 		drawEnts()
 	end
 end
 
 function variables()
-	level = -0
+	level = 1
+	loadLvl = true
 
 	screen = {}
 	screen.scale = 2.5
@@ -66,7 +68,7 @@ function variables()
 	player.jump = false
 	player.jumpCount = 0
 	player.jumpSpeed = 70
-	player.currentJumpSpeed = player.maxJumpSpeed
+	-- player.currentJumpSpeed = player.maxJumpSpeed
 	player.touchesGround = true
 	player.right = false
 	player.left = false
@@ -92,6 +94,27 @@ function drawEnts()
 
 end
 
+function resetEnts()
+	player.jump = false
+	player.jumpCount = 0
+	player.jumpSpeed = 70
+	-- player.currentJumpSpeed = player.maxJumpSpeed
+	player.touchesGround = true
+	player.right = false
+	player.left = false
+
+	walls = {}
+	mushes = {}
+end
+
+function loadEnt()
+	if loadLvl == true then
+		resetEnts()
+		require(path .. level)
+		loadLvl = false
+	end
+end
+
 function logic(dt)
 	for each, wall in pairs(walls) do
 		if wall[1] <= player.x+player.size and wall[1]+wallSize >= player.x then
@@ -109,8 +132,13 @@ function logic(dt)
 			end
 		end
 		if player.y+player.size >= wall[2] and player.y < wall[2]+wallSize then
-			if player.x+player.size <= wall[1]-1 and player.x+player.size >= wall[1]+5 then
+			print("woo wooo woo")
+			if player.x+player.size >= wall[1] and player.x+player.size < wall[1]+wallSize then
+				print("BOOYAH!!!")
 				player.x = player.x - player.speed * dt
+			elseif player.x <= wall[1]+wallSize+1 and player.x > wall[1] then
+				print("NOM NOM NOM NOM NOM NOM ")
+				player.x = player.x + player.speed * dt
 			end
 		end
 	end
