@@ -44,19 +44,22 @@ function editorUpdate(dt)
 			elseif selected == 4 then
 				table.insert(editOrbs, {x, y})
 				table.insert(editPos, {x, y})
+			elseif selected == 5 then
+				table.insert(editTex, {x, y})
+				table.insert(editPos, {x, y})
 			end
 		end
 	end
 	if love.keyboard.isDown("d") then -- Thanks to wzl for this:
-		counter = counter + 2 * dt
+		counter = counter + 5 * dt
 		if counter > scrollInterval then 
-			screen.transX = screen.transX - 8*5
+			screen.transX = screen.transX + 8*5
 			counter = 0
 		end
 	elseif love.keyboard.isDown("a") then
-		counter = counter + 2 * dt
+		counter = counter + 5 * dt
 		if counter > scrollInterval then 
-			screen.transX = screen.transX + 8*5
+			screen.transX = screen.transX - 8*5
 			counter = 0
 		end
 	end
@@ -80,26 +83,28 @@ function editorUpdate(dt)
 end
 
 function editorDraw()
-	love.graphics.setColor(255, 0, 0, 155)
+	love.graphics.setColor(0, 0, 255, 155)
 	love.graphics.rectangle("line", mouse.gx, mouse.gy, 16, 16)
 
-	love.graphics.setColor(0, 0, 255)
-	love.graphics.rectangle("fill", editPlayer.x, editPlayer.y, blocksize, blocksize)
+	love.graphics.setColor(255, 255, 255)
+	love.graphics.draw(player1, editPlayer.x, editPlayer.y)
 
 	for each, wall in pairs(editWalls) do
-		love.graphics.setColor(255, 0, 0)
-		love.graphics.rectangle("fill", wall[1], wall[2], blocksize, blocksize)
+		love.graphics.draw(wall1, wall[1], wall[2])
+	end
+
+	for each, tex in pairs(editTex) do
+		love.graphics.draw(wall1, tex[1], tex[2])
 	end
 
 	for each, mush in pairs(editMushes) do
-		love.graphics.setColor(255, 255, 0)
-		love.graphics.rectangle("fill", mush[1], mush[2], blocksize, blocksize)
+		love.graphics.draw(mush0, tex[1], tex[2])
 	end
 
 	for each, orb in pairs(editOrbs) do
-		love.graphics.setColor(255, 255, 255)
-		love.graphics.rectangle("fill", orb[1], orb[2], blocksize, blocksize)
+		love.graphics.draw(orb1, orb[1], orb[2])
 	end
+
 	print("selection: " .. selected)
 	
 end
@@ -133,6 +138,7 @@ function editorVar()
 	host = "?"
 	path = love.filesystem.getUserDirectory()
 	dirOne = "levels"
+	setupDir()
 end
 
 function setupDir()

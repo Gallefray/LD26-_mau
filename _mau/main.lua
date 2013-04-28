@@ -3,15 +3,43 @@ require "editor"
 function resources()
 	-- love.graphics.newImage("")
 	-- love.audio.newSource("", "stream")
-	pImg = "data/images"
-	pSnd = "data/sound"
-	pMus = "data/music"
+	pImg = "data/images/"
+	pSnd = "data/sound/"
+	pMus = "data/music/"
 
-	playerWalk = love.graphics.newimage(pImg .. "playerWalk.png")
-	playerWalk:setFilter("nearest", "nearest")
+	-- Graphics:
+	player1 = love.graphics.newImage(pImg .. "player1.png")
+	player2 = love.graphics.newImage(pImg .. "player2.png")
+	player3 = love.graphics.newImage(pImg .. "player3.png")
+	player1:setFilter("nearest", "nearest")
+	player2:setFilter("nearest", "nearest")
+	player3:setFilter("nearest", "nearest")
+
+	wall1 = love.graphics.newImage(pImg .. "wall.png")
+	wall1:setFilter("nearest", "nearest")
+
+	mush0 = love.graphics.newImage(pImg .. "enemy1.png")
+	mush1 = love.graphics.newImage(pImg .. "enemy2.png")
+	mush2 = love.graphics.newImage(pImg .. "enemy3.png")
+	mush3 = love.graphics.newImage(pImg .. "enemy5.png")
+	mush0:setFilter("nearest", "nearest")
+	mush1:setFilter("nearest", "nearest")
+	mush2:setFilter("nearest", "nearest")
+	mush3:setFilter("nearest", "nearest")
+
+	bullet1 = love.graphics.newImage(pImg .. "bullet.png")
+	bullet1:setFilter("nearest", "nearest")
+
+	orb1 = love.graphics.newImage(pImg .. "orb1.png")
+	orb1:setFilter("nearest", "nearest")
+
+	
+
+
 end
 
 function love.load()
+	resources()
 	variables()
 	editorLoad()
 end
@@ -82,7 +110,7 @@ function love.draw()
 end
 
 function variables()
-	level = -0
+	level = 1
 	loadLvl = true
 
 	screen = {}
@@ -95,6 +123,8 @@ function variables()
 	player = {}
 	player.x = screen.w/2
 	player.y = screen.h/2
+	player.h = 14
+	player.w = 8
 	player.speed = 75
 	player.jump = false
 	player.jumpCount = 0
@@ -123,32 +153,34 @@ function variables()
 end
 
 function drawEnts()
-	love.graphics.setColor(0, 0, 255)
-	love.graphics.rectangle("fill", player.x, player.y, blocksize, blocksize)
+	love.graphics.setColor(255, 255, 255)
+
+	love.graphics.draw(player1, player.x, player.y)
 
 	for each, wall in pairs(walls) do
-		love.graphics.setColor(255, 0, 0)
-		love.graphics.rectangle("fill", wall[1], wall[2], blocksize, blocksize)
+		love.graphics.draw(wall1, wall[1], wall[2])
 	end
 
 	for each, mush in pairs(mushes) do
-		love.graphics.setColor(255, 255, 0)
-		love.graphics.rectangle("fill", mush[1], mush[2], blocksize, blocksize)
+		if mush[3] == "right" then
+			love.graphics.draw(mush1, mush[1], mush[2])
+		elseif mush[3] == "left" then
+			love.graphics.draw(mush2, mush[1], mush[2])
+		elseif mush[3] == "neut" then
+			love.graphics.draw(mush3, mush[1], mush[2])
+		end 
 	end
 
 	for each, bullet in pairs(bullets) do
-		love.graphics.setColor(0, 255, 0)
-		love.graphics.rectangle("fill", bullet[1], bullet[2], blocksize, blocksize)
+		love.graphics.draw(bullet1, bullet[1], bullet[2])
 	end
 
 	for each, orb in pairs(orbs) do
-		love.graphics.setColor(255, 255, 255)
-		love.graphics.rectangle("fill", orb[1], orb[2], blocksize, blocksize)
+		love.graphics.draw(orb1, orb[1], orb[2])
 	end
 
 	for each, tex in pairs(textile) do
-		love.graphics.setColor(0, 255, 255)
-		love.graphics.rectangle("fill", tex[1], tex[2], blocksize, blocksize)
+		love.graphics.draw(wall1, tex[1], tex[2])
 	end
 
 end
@@ -180,18 +212,12 @@ function logic(dt)
 		level = level - 2
 		print("D: level is now: " .. level)
 	end
-	
-	if ash.y+blocksize >= player.y and ash.y < player.y+blocksize then
-		if player.x+blocksize >= ash.x and player.x <= ash.x+blocksize then
-			level = level - 3	
-		end
-	end 
 
 	-- PLAYER - WALL STUFF:
 	for each, wall in pairs(walls) do
-		if wall[1] <= player.x+blocksize and wall[1]+blocksize >= player.x then
+		if wall[1] <= player.x+player.w and wall[1]+blocksize >= player.x then
 			-- Gravity Stuff:
-			if player.y <= wall[2]+blocksize and player.y+blocksize >= wall[2]-1 then
+			if player.y <= wall[2]+blocksize and player.y+player.h >= wall[2]-1 then
 				player.touchesGround = true
 				player.jumpCount = 0
 
@@ -207,8 +233,8 @@ function logic(dt)
 		end
 		-- Some more Wall Collisions:
 		-- (left | right)
-		if player.y+blocksize >= wall[2] and player.y < wall[2]+blocksize then
-			if player.x+blocksize >= wall[1] and player.x+blocksize < wall[1]+blocksize then
+		if player.y+player.h >= wall[2] and player.y < wall[2]+blocksize then
+			if player.x+player.w >= wall[1] and player.x+player.w < wall[1]+blocksize then
 				player.x = player.x - player.speed * dt
 
 			elseif player.x <= wall[1]+blocksize+1 and player.x > wall[1] then
@@ -245,13 +271,13 @@ function logic(dt)
 			end
 
 			-- Player - Mush collision detection
-			if mush[2]+blocksize >= player.y and mush[2] < player.y+blocksize then
-				if mush[1]+blocksize >= player.x and mush[1]+blocksize < player.x+blocksize then
+			if mush[2]+blocksize >= player.y and mush[2] < player.y+player.h then
+				if mush[1]+blocksize >= player.x and mush[1]+blocksize < player.x+player.w then
 					mush[3] = "left"
 					mush[1] = mush[1] - player.speed*2 * dt
 					player.health = player.health - 1
 					print("Bop!")
-				elseif mush[1] <= player.x+blocksize+1 and mush[1] > player.x then
+				elseif mush[1] <= player.x+player.w+1 and mush[1] > player.x then
 					mush[3] = "right"
 					mush[1] = mush[1] + player.speed*2 * dt
 					player.health = player.health - 1
@@ -324,10 +350,3 @@ function logic(dt)
 		end
 	end
 end
-
-function loadQuads()
-{
-	qOne = love.graphics.newQuad(0, 0, 16, 16, 0, 16)
-	qTwo = love.graphics.newQuad(16, 0, 16, 16, 0, 16)
-
-}
