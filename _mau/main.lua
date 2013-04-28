@@ -73,7 +73,7 @@ function love.draw()
 end
 
 function variables()
-	level = 1
+	level = -0
 	loadLvl = true
 
 	screen = {}

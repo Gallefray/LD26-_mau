@@ -9,8 +9,8 @@ function editorUpdate(dt)
 	mouse.gx = mouse.x - (mouse.x % 40)
 	mouse.gy = mouse.y - (mouse.y % 40)
 
-	mouse.gx = (mouse.gx+screen.transX) /screen.scale
-	mouse.gy = (mouse.gy+screen.transY) /screen.scale
+	mouse.gx = (mouse.gx-screen.transX)/screen.scale
+	mouse.gy = (mouse.gy-screen.transY)/screen.scale
 
 	if love.mouse.isDown("l") then
 		local x = mouse.gx
@@ -45,6 +45,19 @@ function editorUpdate(dt)
 				table.insert(editOrbs, {x, y})
 				table.insert(editPos, {x, y})
 			end
+		end
+	end
+	if love.keyboard.isDown("d") then -- Thanks to wzl for this:
+		counter = counter + 2 * dt
+		if counter > scrollInterval then 
+			screen.transX = screen.transX - 8*5
+			counter = 0
+		end
+	elseif love.keyboard.isDown("a") then
+		counter = counter + 2 * dt
+		if counter > scrollInterval then 
+			screen.transX = screen.transX + 8*5
+			counter = 0
 		end
 	end
 	function love.keypressed(key)
@@ -109,6 +122,9 @@ function editorVar()
 
 	selected = 1
 	maxSel = 4
+
+	counter = 0
+	scrollInterval = 1
 
 	editLevel = 1
 
