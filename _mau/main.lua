@@ -138,6 +138,7 @@ function logic(dt)
 			end
 		end
 		-- Some more Wall Collisions:
+		-- (left right)
 		if player.y+blocksize >= wall[2] and player.y < wall[2]+blocksize then
 
 			if player.x+blocksize >= wall[1] and player.x+blocksize < wall[1]+blocksize then
@@ -169,6 +170,18 @@ function logic(dt)
 
 				elseif mush[2] <= wall[2] then
 					mush[4] = false
+
+				end
+			end
+
+			-- left right wall collsions
+			if mush[2]+blocksize >= wall[2] and mush[2] < wall[2]+blocksize then
+
+				if mush[1]+blocksize >= wall[1] and mush[1]+blocksize < wall[1]+blocksize then
+					mush[1] = mush[1] - player.speed * dt
+
+				elseif mush[1] <= wall[1]+blocksize+1 and mush[1] > wall[1] then
+					mush[1] = mush[1] + player.speed * dt
 
 				end
 			end
