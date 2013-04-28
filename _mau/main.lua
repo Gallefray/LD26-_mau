@@ -9,6 +9,11 @@ function love.load()
 end
 
 function love.update(dt)
+	function love.keypressed(key)
+		if key == "\\" then
+      		debug.debug()
+      	end
+   	end
 	if level == 1 then
 		if love.keyboard.isDown("escape") then
 			love.event.quit()
@@ -16,7 +21,6 @@ function love.update(dt)
 		if love.keyboard.isDown("left") then
 			player.x = player.x - player.speed * dt
 			screen.transX = screen.transX + (player.speed*2.5) * dt
-			player.dir = "left"
 			player.left = true
 			player.right = false
 		elseif love.keyboard.isDown("right") then 
@@ -24,17 +28,30 @@ function love.update(dt)
 			screen.transX = screen.transX - (player.speed*2.5) * dt
 			player.right = true
 			player.left = false
-		else
-			player.left = false
-			player.right = false
+		-- else
+		-- 	player.left = false
+		-- 	player.right = false
 		end
 		if love.keyboard.isDown("s") then
 			if player.touchesGround == true then
 				player.jump = true
 			end
 		end
-		if love.keybord.isDown("d") then
-			
+		if love.keyboard.isDown("d") then
+			if bulletCounter == 0 then
+				print("DETECTED")
+				local x = player.x
+				local y = player.y
+				if player.right == true then
+					table.insert(bullets, {x, y, "right"})
+					bulletShot = true
+					print("1")
+				elseif player.left == true then
+					table.insert(bullets, {x, y, "left"})
+					bulletShot = true
+					print("2")
+				end
+			end 
 		end
 
 		logic(dt)
@@ -73,7 +90,7 @@ function variables()
 	player.jumpCount = 0
 	player.jumpSpeed = 70
 	player.touchesGround = true
-	player.right = false
+	player.right = true
 	player.left = false
 	player.health = 10
 
@@ -104,8 +121,8 @@ function drawEnts()
 	end
 
 	for each, bullet in pairs(bullets) do
-		love.graphics.setColor(255, 255, 50)
-		love.graphics.rectangle("fill", mush[1], mush[2], blocksize, blocksize)
+		love.graphics.setColor(0, 255, 0)
+		love.graphics.rectangle("fill", bullet[1], bullet[2], blocksize, blocksize)
 	end
 
 	for each, orb in pairs(orbs) do
@@ -123,6 +140,9 @@ function resetEnts()
 	player.right = false
 	player.left = false
 	player.health = 10
+
+	bulletShot = false
+	bulletCounter = 0
 
 	walls = {} -- x, y
 	bullets = {} -- x, y, dir
@@ -186,9 +206,11 @@ function logic(dt)
 			if wall[1] <= mush[1]+blocksize and wall[1]+blocksize >= mush[1] then
 				if mush[2] <= wall[2]+blocksize and mush[2]+blocksize >= wall[2]-1 then
 					mush[4] = true
+					print("MUSH4 = true")
 
 				elseif mush[2] <= wall[2] then
 					mush[4] = false
+					print("MUSH4 = false")
 
 				end
 			end
@@ -245,5 +267,16 @@ function logic(dt)
 		level = level - 2
 		print("D: level is now: " .. level)
 	end 
+
+	if bulletShot == true then
+		bulletCounter = bulletCounter + 1 * dt
+		if bulletCounter > 0.2 then
+			bulletShot = false
+			bulletCounter = 0
+		end
+	end
+	-- for each, bullet in pairs(bullets) do
+	-- 	if bullet 
+	-- end
 
 end
