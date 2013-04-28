@@ -140,7 +140,6 @@ function logic(dt)
 		-- Some more Wall Collisions:
 		-- (left right)
 		if player.y+blocksize >= wall[2] and player.y < wall[2]+blocksize then
-
 			if player.x+blocksize >= wall[1] and player.x+blocksize < wall[1]+blocksize then
 				player.x = player.x - player.speed * dt
 
@@ -156,13 +155,12 @@ function logic(dt)
 		-- collsions:
 		for each, wall in pairs(walls) do
 			if mush[2]+blocksize >= wall[2] and mush[2] < wall[2]+blocksize then
-				if wall[1]+blocksize >= wall[1] and wall[1]+blocksize < wall[1]+blocksize then
+				if mush[1]+blocksize >= wall[1] and mush[1]+blocksize < wall[1]+blocksize then
 					mush[3] = "left"
-				elseif wall[1] <= wall[1]+blocksize+1 and wall[1] > wall[1] then
+				elseif mush[1] <= wall[1]+blocksize+1 and mush[1] > wall[1] then
 					mush[3] = "right"
 				end
 			end
-
 			-- Gravity Stuff:
 			if wall[1] <= mush[1]+blocksize and wall[1]+blocksize >= mush[1] then
 				if mush[2] <= wall[2]+blocksize and mush[2]+blocksize >= wall[2]-1 then
@@ -173,25 +171,23 @@ function logic(dt)
 
 				end
 			end
-
 			-- left right wall collsions
-			if mush[2]+blocksize >= wall[2] and mush[2] < wall[2]+blocksize then
-
-				if mush[1]+blocksize >= wall[1] and mush[1]+blocksize < wall[1]+blocksize then
-					mush[1] = mush[1] - player.speed * dt
-
-				elseif mush[1] <= wall[1]+blocksize+1 and mush[1] > wall[1] then
-					mush[1] = mush[1] + player.speed * dt
-
-				end
-			end
+			-- if mush[2]+blocksize >= wall[2] and mush[2] < wall[2]+blocksize then
+			-- 	if mush[1]+blocksize >= wall[1] and mush[1]+blocksize < wall[1]+blocksize then
+			-- 		mush[1] = mush[1] - player.speed*2 * dt
+			-- 		mush[3] = "left"
+			-- 	elseif mush[1] <= wall[1]+blocksize+1 and mush[1] > wall[1] then
+			-- 		mush[1] = mush[1] + player.speed*2 * dt
+			-- 		mush[3] = "right"
+			-- 	end
+			-- end
 		end
 
 		-- movement:
 		if mush[3] == "right" then
 			mush[1] = mush[1] + (player.speed/1.5) * dt
 		elseif mush[3] == "left" then
-			mush[1] = mush[1] + (player.speed/1.5) * dt
+			mush[1] = mush[1] - (player.speed/1.5) * dt
 		end
 
 		if mush[4] == false then
