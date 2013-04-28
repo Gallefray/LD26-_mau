@@ -15,11 +15,13 @@ function love.update(dt)
 		end
 		if love.keyboard.isDown("left") then
 			player.x = player.x - player.speed * dt
+			screen.transX = screen.transX + (player.speed*2.5) * dt
 			player.dir = "left"
 			player.left = true
 			player.right = false
 		elseif love.keyboard.isDown("right") then 
 			player.x = player.x + player.speed * dt
+			screen.transX = screen.transX - (player.speed*2.5) * dt
 			player.right = true
 			player.left = false
 		else
@@ -30,6 +32,9 @@ function love.update(dt)
 			if player.touchesGround == true then
 				player.jump = true
 			end
+		end
+		if love.keybord.isDown("d") then
+			
 		end
 
 		logic(dt)
@@ -70,6 +75,7 @@ function variables()
 	player.touchesGround = true
 	player.right = false
 	player.left = false
+	player.health = 10
 
 	blocksize = 16
 
@@ -97,6 +103,16 @@ function drawEnts()
 		love.graphics.rectangle("fill", mush[1], mush[2], blocksize, blocksize)
 	end
 
+	for each, bullet in pairs(bullets) do
+		love.graphics.setColor(255, 255, 50)
+		love.graphics.rectangle("fill", mush[1], mush[2], blocksize, blocksize)
+	end
+
+	for each, orb in pairs(orbs) do
+		love.graphics.setColor(255, 255, 255)
+		love.graphics.rectangle("fill", orb[1], orb[2], blocksize, blocksize)
+	end
+
 end
 
 function resetEnts()
@@ -106,9 +122,13 @@ function resetEnts()
 	player.touchesGround = true
 	player.right = false
 	player.left = false
+	player.health = 10
 
-	walls = {}
-	mushes = {}
+	walls = {} -- x, y
+	bullets = {} -- x, y, dir
+	mushes = {} -- x, y, dir, gravity
+	orbs = {} -- x, y
+
 end
 
 function loadEnt()
@@ -120,6 +140,7 @@ function loadEnt()
 end
 
 function logic(dt)
+	-- PLAYER - WALL STUFF:
 	for each, wall in pairs(walls) do
 		if wall[1] <= player.x+blocksize and wall[1]+blocksize >= player.x then
 			-- Gravity Stuff:
@@ -150,9 +171,9 @@ function logic(dt)
 		end
 	end
 
+	-- MUSH LOGIC 
 	for each, mush in pairs(mushes) do
-
-		-- collsions:
+		-- Collsions:
 		for each, wall in pairs(walls) do
 			if mush[2]+blocksize >= wall[2] and mush[2] < wall[2]+blocksize then
 				if mush[1]+blocksize >= wall[1] and mush[1]+blocksize < wall[1]+blocksize then
@@ -171,19 +192,24 @@ function logic(dt)
 
 				end
 			end
-			-- left right wall collsions
-			-- if mush[2]+blocksize >= wall[2] and mush[2] < wall[2]+blocksize then
-			-- 	if mush[1]+blocksize >= wall[1] and mush[1]+blocksize < wall[1]+blocksize then
-			-- 		mush[1] = mush[1] - player.speed*2 * dt
-			-- 		mush[3] = "left"
-			-- 	elseif mush[1] <= wall[1]+blocksize+1 and mush[1] > wall[1] then
-			-- 		mush[1] = mush[1] + player.speed*2 * dt
-			-- 		mush[3] = "right"
-			-- 	end
-			-- end
 		end
 
-		-- movement:
+		-- Player - Mush collision detection
+		if mush[2]+blocksize >= player.y and mush[2] < player.y+blocksize then
+			if mush[1]+blocksize >= player.x and mush[1]+blocksize < player.x+blocksize then
+				mush[3] = "left"
+				mush[1] = mush[1] - player.speed*2 * dt
+				player.health = player.health - 1
+				print("Bop!")
+			elseif mush[1] <= player.x+blocksize+1 and mush[1] > player.x then
+				mush[3] = "right"
+				mush[1] = mush[1] + player.speed*2 * dt
+				player.health = player.health - 1
+				print("Bop!")
+			end
+		end
+
+		-- Movement:
 		if mush[3] == "right" then
 			mush[1] = mush[1] + (player.speed/1.5) * dt
 		elseif mush[3] == "left" then
@@ -195,6 +221,13 @@ function logic(dt)
 		end
 	end
 
+	if ash.y+blocksize >= player.y and ash.y < player.y+blocksize then
+		if player.x+blocksize >= ash.x and player.x <= ash.x+blocksize then
+			level = level - 3	
+		end
+	end
+
+	-- MORE PLAYER LOGIC:
 	-- More Gravity Stuff
 	if player.touchesGround == false and player.jump == false then
 		player.y = player.y + 70 * dt
@@ -207,5 +240,10 @@ function logic(dt)
 	else
 		player.jump = false
 	end
+	-- Player hurt/death screens
+	if player.health < 1 then
+		level = level - 2
+		print("D: level is now: " .. level)
+	end 
 
 end
