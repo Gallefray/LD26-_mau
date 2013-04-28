@@ -219,52 +219,67 @@ function logic(dt)
 	-- MUSH LOGIC 
 	for each, mush in pairs(mushes) do
 		-- Collsions:
-		for each, wall in pairs(walls) do
-			if mush[2]+blocksize >= wall[2] and mush[2] < wall[2]+blocksize then
-				if mush[1]+blocksize >= wall[1] and mush[1]+blocksize < wall[1]+blocksize then
+		if mush[3] ~= "neut" then
+			for each, wall in pairs(walls) do
+				if mush[2]+blocksize >= wall[2] and mush[2] < wall[2]+blocksize then
+					if mush[1]+blocksize >= wall[1] and mush[1]+blocksize < wall[1]+blocksize then
+						mush[3] = "left"
+					elseif mush[1] <= wall[1]+blocksize+1 and mush[1] > wall[1] then
+						mush[3] = "right"
+					end
+				end
+				-- Gravity Stuff:
+				if wall[1] <= mush[1]+blocksize and wall[1]+blocksize >= mush[1] then
+					if mush[2] <= wall[2]+blocksize and mush[2]+blocksize >= wall[2]-1 then
+						mush[4] = true
+						print("MUSH4 = true")
+
+					elseif mush[2] <= wall[2] then
+						mush[4] = false
+						print("MUSH4 = false")
+
+					end
+				end
+			end
+
+			-- Player - Mush collision detection
+			if mush[2]+blocksize >= player.y and mush[2] < player.y+blocksize then
+				if mush[1]+blocksize >= player.x and mush[1]+blocksize < player.x+blocksize then
 					mush[3] = "left"
-				elseif mush[1] <= wall[1]+blocksize+1 and mush[1] > wall[1] then
+					mush[1] = mush[1] - player.speed*2 * dt
+					player.health = player.health - 1
+					print("Bop!")
+				elseif mush[1] <= player.x+blocksize+1 and mush[1] > player.x then
 					mush[3] = "right"
+					mush[1] = mush[1] + player.speed*2 * dt
+					player.health = player.health - 1
+					print("Bop!")
 				end
 			end
-			-- Gravity Stuff:
-			if wall[1] <= mush[1]+blocksize and wall[1]+blocksize >= mush[1] then
-				if mush[2] <= wall[2]+blocksize and mush[2]+blocksize >= wall[2]-1 then
-					mush[4] = true
-					print("MUSH4 = true")
 
-				elseif mush[2] <= wall[2] then
-					mush[4] = false
-					print("MUSH4 = false")
+			-- Movement:
+			if mush[3] == "right" then
+				mush[1] = mush[1] + (player.speed/1.5) * dt
+			elseif mush[3] == "left" then
+				mush[1] = mush[1] - (player.speed/1.5) * dt
+			end
 
+			if mush[4] == false then
+				mush[2] = mush[2] + 64 * dt
+			end
+
+			-- Death:
+			for every, bullet in pairs(bullets) do
+				print("bullet: " .. bullet[1] .. " " .. bullet[2] .. "\n")
+				print("mush: " .. mush[1] .. " " .. mush[2] .. "\n")
+				if bullet[2]+blocksize >= mush[2] and bullet[2] < mush[2]+blocksize then
+					if bullet[1]+blocksize >= mush[1] and bullet[1] <= mush[1]+blocksize then
+						table.remove(bullets, every)
+						mush[3] = "neut"
+						print("1 :O")
+					end
 				end
 			end
-		end
-
-		-- Player - Mush collision detection
-		if mush[2]+blocksize >= player.y and mush[2] < player.y+blocksize then
-			if mush[1]+blocksize >= player.x and mush[1]+blocksize < player.x+blocksize then
-				mush[3] = "left"
-				mush[1] = mush[1] - player.speed*2 * dt
-				player.health = player.health - 1
-				print("Bop!")
-			elseif mush[1] <= player.x+blocksize+1 and mush[1] > player.x then
-				mush[3] = "right"
-				mush[1] = mush[1] + player.speed*2 * dt
-				player.health = player.health - 1
-				print("Bop!")
-			end
-		end
-
-		-- Movement:
-		if mush[3] == "right" then
-			mush[1] = mush[1] + (player.speed/1.5) * dt
-		elseif mush[3] == "left" then
-			mush[1] = mush[1] - (player.speed/1.5) * dt
-		end
-
-		if mush[4] == false then
-			mush[2] = mush[2] + 64 * dt
 		end
 	end
 
@@ -292,14 +307,6 @@ function logic(dt)
 			table.remove(bullets, each)
 		end
 
-		for every, mush in pairs(mushes) do
-			if bullet[2]+blocksize >= mush[2] and bullet[2] <= mush[2]+blocksize then
-				if bullet[1]+blocksize >= mush[1] and bullet[1] <= mush[1]+blocksize then
-					table.remove(mush, every)
-					table.remove(bullet, each)
-				end
-			end
-		end
 		if bullet[3] == "right" then
 			bullet[1] = bullet[1] + (player.speed*2) * dt
 		elseif bullet[3] == "left" then
