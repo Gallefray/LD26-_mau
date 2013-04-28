@@ -1,11 +1,9 @@
-player.x = 128
+player.x = 144
 player.y = 64
 table.insert(walls, {0, 128})
 table.insert(walls, {16, 128})
-table.insert(walls, {16, 112})
-table.insert(walls, {32, 112})
-table.insert(walls, {48, 112})
-table.insert(walls, {64, 112})
+table.insert(walls, {32, 128})
+table.insert(walls, {48, 128})
 table.insert(walls, {64, 128})
 table.insert(walls, {80, 128})
 table.insert(walls, {96, 128})
@@ -22,5 +20,5 @@ table.insert(walls, {256, 128})
 table.insert(walls, {272, 128})
 table.insert(walls, {288, 128})
 table.insert(walls, {304, 128})
-table.insert(mushes, {208, 64, 'right', false})
-table.insert(mushes, {48, 80, 'right', false})
+table.insert(mushes, {240, 80, 'right', false})
+table.insert(orbs, {32, 80})

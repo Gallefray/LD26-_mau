@@ -41,6 +41,9 @@ function editorUpdate(dt)
 			elseif selected == 3 then
 				table.insert(editMushes, {x, y})
 				table.insert(editPos, {x, y})
+			elseif selected == 4 then
+				table.insert(editOrbs, {x, y})
+				table.insert(editPos, {x, y})
 			end
 		end
 	end
@@ -79,6 +82,11 @@ function editorDraw()
 		love.graphics.setColor(255, 255, 0)
 		love.graphics.rectangle("fill", mush[1], mush[2], blocksize, blocksize)
 	end
+
+	for each, orb in pairs(editOrbs) do
+		love.graphics.setColor(255, 255, 255)
+		love.graphics.rectangle("fill", orb[1], orb[2], blocksize, blocksize)
+	end
 end
 
 function editorVar()
@@ -97,9 +105,10 @@ function editorVar()
 	editWalls = {}
 	editMushes = {}
 	editOrbs = {} -- x, y
+	editTex = {} -- tex, x, y
 
 	selected = 1
-	maxSel = 3
+	maxSel = 4
 
 	editLevel = 1
 
@@ -140,6 +149,9 @@ function save(file)
 		elseif x == 2 then
 			saveLvl:write("table.insert(mushes, {" .. mush[1] .. ", " .. mush[2] .. ", 'right', false})\n")
 		end
+	end
+	for each, orb in pairs(editOrbs) do
+		saveLvl:write("table.insert(orbs, {" .. orb[1] .. ", " .. orb[2] .. "})\n")
 	end
 	print("DONE!")
 	saveLvl:close()

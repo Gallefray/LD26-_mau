@@ -1,6 +1,8 @@
 require "editor"
 
 function resources()
+	-- love.graphics.newImage("")
+	-- love.audio.newSource("", "stream")
 end
 
 function love.load()
@@ -39,17 +41,16 @@ function love.update(dt)
 		end
 		if love.keyboard.isDown("d") then
 			if bulletCounter == 0 then
-				print("DETECTED")
 				local x = player.x
 				local y = player.y
 				if player.right == true then
 					table.insert(bullets, {x, y, "right"})
 					bulletShot = true
-					print("1")
+					print("PEW!")
 				elseif player.left == true then
 					table.insert(bullets, {x, y, "left"})
 					bulletShot = true
-					print("2")
+					print("PEW!")
 				end
 			end 
 		end
@@ -92,7 +93,12 @@ function variables()
 	player.touchesGround = true
 	player.right = true
 	player.left = false
-	player.health = 10
+	player.health = 5
+	player.maxHealth = 5
+	score = 0
+
+	bulletShot = false
+	bulletCounter = 0
 
 	blocksize = 16
 
@@ -100,6 +106,7 @@ function variables()
 	bullets = {} -- x, y, dir
 	mushes = {} -- x, y, dir, gravity
 	orbs = {} -- x, y
+	textile = {}
 
 	ash = {}
 	ash.x = 0
@@ -130,30 +137,16 @@ function drawEnts()
 		love.graphics.rectangle("fill", orb[1], orb[2], blocksize, blocksize)
 	end
 
-end
-
-function resetEnts()
-	player.jump = false
-	player.jumpCount = 0
-	player.jumpSpeed = 70
-	player.touchesGround = true
-	player.right = false
-	player.left = false
-	player.health = 10
-
-	bulletShot = false
-	bulletCounter = 0
-
-	walls = {} -- x, y
-	bullets = {} -- x, y, dir
-	mushes = {} -- x, y, dir, gravity
-	orbs = {} -- x, y
+	for each, tex in pairs(textile) do
+		love.graphics.setColor(0, 255, 255)
+		love.graphics.rectangle("fill", tex[1], tex[2], blocksize, blocksize)
+	end
 
 end
 
 function loadEnt()
 	if loadLvl == true then
-		resetEnts()
+		-- resetEnts()
 		require(path .. level)
 		loadLvl = false
 	end
@@ -204,7 +197,7 @@ function logic(dt)
 			end
 		end
 		-- Some more Wall Collisions:
-		-- (left right)
+		-- (left | right)
 		if player.y+blocksize >= wall[2] and player.y < wall[2]+blocksize then
 			if player.x+blocksize >= wall[1] and player.x+blocksize < wall[1]+blocksize then
 				player.x = player.x - player.speed * dt
@@ -232,11 +225,11 @@ function logic(dt)
 				if wall[1] <= mush[1]+blocksize and wall[1]+blocksize >= mush[1] then
 					if mush[2] <= wall[2]+blocksize and mush[2]+blocksize >= wall[2]-1 then
 						mush[4] = true
-						print("MUSH4 = true")
+						-- print("MUSH4 = true")
 
 					elseif mush[2] <= wall[2] then
 						mush[4] = false
-						print("MUSH4 = false")
+						-- print("MUSH4 = false")
 
 					end
 				end
@@ -270,13 +263,15 @@ function logic(dt)
 
 			-- Death:
 			for every, bullet in pairs(bullets) do
-				print("bullet: " .. bullet[1] .. " " .. bullet[2] .. "\n")
-				print("mush: " .. mush[1] .. " " .. mush[2] .. "\n")
+				-- print("bullet: " .. bullet[1] .. " " .. bullet[2] .. "\n")
+				-- print("mush: " .. mush[1] .. " " .. mush[2] .. "\n")
 				if bullet[2]+blocksize >= mush[2] and bullet[2] < mush[2]+blocksize then
 					if bullet[1]+blocksize >= mush[1] and bullet[1] <= mush[1]+blocksize then
 						table.remove(bullets, every)
 						mush[3] = "neut"
-						print("1 :O")
+						score = score + 1
+						print("BLAM")
+						-- print("1 :O")
 					end
 				end
 			end
@@ -287,7 +282,13 @@ function logic(dt)
 	for each, orb in pairs(orbs) do
 		if orb[2]+blocksize >= player.y and orb[2] < player.y+blocksize then
 			if orb[1]+blocksize >= player.x and orb[1] <= player.x+blocksize then
-				player.health = player.health + 1
+				if player.health == player.maxHealth then
+					score = score + 1
+					print("score: " .. score)
+				elseif player.health < player.maxHealth then
+					player.health = player.health + 1
+					print("health: " .. player.health)
+				end
 				table.remove(orbs, each)
 			end
 		end
