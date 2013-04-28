@@ -14,10 +14,10 @@ function love.update(dt)
       		debug.debug()
       	end
    	end
+   	if love.keyboard.isDown("escape") then
+		love.event.quit()
+	end
 	if level == 1 then
-		if love.keyboard.isDown("escape") then
-			love.event.quit()
-		end
 		if love.keyboard.isDown("left") then
 			player.x = player.x - player.speed * dt
 			screen.transX = screen.transX + (player.speed*2.5) * dt
@@ -160,6 +160,31 @@ function loadEnt()
 end
 
 function logic(dt)
+	-- PLAYER LOGIC:
+	-- More Gravity Stuff
+	if player.touchesGround == false and player.jump == false then
+		player.y = player.y + 70 * dt
+	end
+	if player.jumpCount < 1.1 then
+		if player.jump == true then
+			player.y = player.y - player.jumpSpeed * dt
+			player.jumpCount = player.jumpCount + 2 * dt
+		end
+	else
+		player.jump = false
+	end
+	-- Player hurt/death screens
+	if player.health < 1 then
+		level = level - 2
+		print("D: level is now: " .. level)
+	end
+	
+	if ash.y+blocksize >= player.y and ash.y < player.y+blocksize then
+		if player.x+blocksize >= ash.x and player.x <= ash.x+blocksize then
+			level = level - 3	
+		end
+	end 
+
 	-- PLAYER - WALL STUFF:
 	for each, wall in pairs(walls) do
 		if wall[1] <= player.x+blocksize and wall[1]+blocksize >= player.x then
@@ -243,31 +268,17 @@ function logic(dt)
 		end
 	end
 
-	if ash.y+blocksize >= player.y and ash.y < player.y+blocksize then
-		if player.x+blocksize >= ash.x and player.x <= ash.x+blocksize then
-			level = level - 3	
+	-- ORB LOGIC:
+	for each, orb in pairs(orbs) do
+		if orb[2]+blocksize >= player.y and orb[2] < player.y+blocksize then
+			if orb[1]+blocksize >= player.x and orb[1] <= player.x+blocksize then
+				player.health = player.health + 1
+				table.remove(orbs, each)
+			end
 		end
 	end
 
-	-- MORE PLAYER LOGIC:
-	-- More Gravity Stuff
-	if player.touchesGround == false and player.jump == false then
-		player.y = player.y + 70 * dt
-	end
-	if player.jumpCount < 1.1 then
-		if player.jump == true then
-			player.y = player.y - player.jumpSpeed * dt
-			player.jumpCount = player.jumpCount + 2 * dt
-		end
-	else
-		player.jump = false
-	end
-	-- Player hurt/death screens
-	if player.health < 1 then
-		level = level - 2
-		print("D: level is now: " .. level)
-	end 
-
+	-- BULLET LOGIC:
 	if bulletShot == true then
 		bulletCounter = bulletCounter + 1 * dt
 		if bulletCounter > 0.2 then
@@ -275,8 +286,25 @@ function logic(dt)
 			bulletCounter = 0
 		end
 	end
-	-- for each, bullet in pairs(bullets) do
-	-- 	if bullet 
-	-- end
+	for each, bullet in pairs(bullets) do
+		local visbuf = 200
+		if bullet[1] > player.x+screen.w + visbuf or bullet[1] < player.x-screen.w - visbuf then -- Do this upon wall collsions too! :P
+			table.remove(bullets, each)
+		end
+
+		for every, mush in pairs(mushes) do
+			if bullet[2]+blocksize >= mush[2] and bullet[2] <= mush[2]+blocksize then
+				if bullet[1]+blocksize >= mush[1] and bullet[1] <= mush[1]+blocksize then
+					table.remove(mush, every)
+					table.remove(bullet, each)
+				end
+			end
+		end
+		if bullet[3] == "right" then
+			bullet[1] = bullet[1] + (player.speed*2) * dt
+		elseif bullet[3] == "left" then
+			bullet[1] = bullet[1] - (player.speed*2) * dt
+		end
+	end
 
 end
