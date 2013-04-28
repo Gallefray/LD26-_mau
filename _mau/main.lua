@@ -3,6 +3,12 @@ require "editor"
 function resources()
 	-- love.graphics.newImage("")
 	-- love.audio.newSource("", "stream")
+	pImg = "data/images"
+	pSnd = "data/sound"
+	pMus = "data/music"
+
+	playerWalk = love.graphics.newimage(pImg .. "playerWalk.png")
+	playerWalk:setFilter("nearest", "nearest")
 end
 
 function love.load()
@@ -62,13 +68,16 @@ function love.update(dt)
 end
 
 function love.draw()
+	love.graphics.push()
 	love.graphics.translate(screen.transX, screen.transY)
 	love.graphics.scale(screen.scale, screen.scale)
 	if level == -0 then
 		editorDraw()
+		love.graphics.pop()
 	elseif level == 1 then
 		loadEnt()
 		drawEnts()
+		love.graphics.pop()
 	end
 end
 
@@ -314,5 +323,11 @@ function logic(dt)
 			bullet[1] = bullet[1] - (player.speed*2) * dt
 		end
 	end
-
 end
+
+function loadQuads()
+{
+	qOne = love.graphics.newQuad(0, 0, 16, 16, 0, 16)
+	qTwo = love.graphics.newQuad(16, 0, 16, 16, 0, 16)
+
+}

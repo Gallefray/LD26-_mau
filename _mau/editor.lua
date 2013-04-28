@@ -100,6 +100,8 @@ function editorDraw()
 		love.graphics.setColor(255, 255, 255)
 		love.graphics.rectangle("fill", orb[1], orb[2], blocksize, blocksize)
 	end
+	print("selection: " .. selected)
+	
 end
 
 function editorVar()
