@@ -133,6 +133,14 @@ function save(file)
 	for each, wall in pairs(editWalls) do
 		saveLvl:write("table.insert(walls, {" .. wall[1] .. ", " .. wall[2] .. "})\n")
 	end
+	for each, mush in pairs(editMushes) do
+		local x = math.random(1, 2)
+		if x == 1 then
+			saveLvl:write("table.insert(mushes, {" .. mush[1] .. ", " .. mush[2] .. ", 'left', false})\n")
+		elseif x == 2 then
+			saveLvl:write("table.insert(mushes, {" .. mush[1] .. ", " .. mush[2] .. ", 'right', false})\n")
+		end
+	end
 	print("DONE!")
 	saveLvl:close()
 end

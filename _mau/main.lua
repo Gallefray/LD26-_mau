@@ -161,14 +161,16 @@ function logic(dt)
 					mush[3] = "right"
 				end
 			end
-		end
 
-		-- gravity:
-		if wall[1] <= mush[1]+blocksize and wall[1]+blocksize >= mush[1] then
-			if mush[2] <= wall[2]+blocksize and mush[2]+blocksize >= wall[2]-1 then
-				mush[2] = mush[2] + 70 * dt
-			-- elseif mush[2] < wall[2] then
-			-- 	mush[4] = false
+			-- Gravity Stuff:
+			if wall[1] <= mush[1]+blocksize and wall[1]+blocksize >= mush[1] then
+				if mush[2] <= wall[2]+blocksize and mush[2]+blocksize >= wall[2]-1 then
+					mush[4] = true
+
+				elseif mush[2] <= wall[2] then
+					mush[4] = false
+
+				end
 			end
 		end
 
@@ -177,6 +179,10 @@ function logic(dt)
 			mush[1] = mush[1] + (player.speed/1.5) * dt
 		elseif mush[3] == "left" then
 			mush[1] = mush[1] + (player.speed/1.5) * dt
+		end
+
+		if mush[4] == false then
+			mush[2] = mush[2] + 64 * dt
 		end
 	end
 

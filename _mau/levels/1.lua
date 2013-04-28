@@ -1,5 +1,5 @@
-player.x = 112
-player.y = 48
+player.x = 32
+player.y = 64
 table.insert(walls, {0, 112})
 table.insert(walls, {16, 112})
 table.insert(walls, {32, 112})
@@ -20,3 +20,7 @@ table.insert(walls, {256, 112})
 table.insert(walls, {272, 112})
 table.insert(walls, {288, 112})
 table.insert(walls, {304, 112})
+table.insert(walls, {256, 96})
+table.insert(walls, {0, 96})
+-- table.insert(mushes, {144, 96, 'right', true})
+table.insert(mushes, {176, 48, 'left', true})
