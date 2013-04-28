@@ -33,8 +33,13 @@ function editorUpdate(dt)
 				editPlayer.x = x
 				editPlayer.y = y
 				table.insert(editPos, {x, y})
+
 			elseif selected == 2 then
 				table.insert(editWalls, {x, y})
+				table.insert(editPos, {x, y})
+
+			elseif selected == 3 then
+				table.insert(editMushes, {x, y})
 				table.insert(editPos, {x, y})
 			end
 		end
@@ -70,7 +75,7 @@ function editorDraw()
 		love.graphics.rectangle("fill", wall[1], wall[2], blocksize, blocksize)
 	end
 
-	for each, mush in pairs(mushes) do
+	for each, mush in pairs(editMushes) do
 		love.graphics.setColor(255, 255, 0)
 		love.graphics.rectangle("fill", mush[1], mush[2], blocksize, blocksize)
 	end
@@ -90,10 +95,11 @@ function editorVar()
 	editPlayer.y = 0
 
 	editWalls = {}
-	editMush = {}
+	editMushes = {}
+	editOrbs = {} -- x, y
 
 	selected = 1
-	maxSel = 2
+	maxSel = 3
 
 	editLevel = 1
 

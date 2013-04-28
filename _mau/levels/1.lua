@@ -1,6 +1,11 @@
-player.x = 144
-player.y = 96
-table.insert(walls, {96, 96})
+player.x = 112
+player.y = 48
+table.insert(walls, {0, 112})
+table.insert(walls, {16, 112})
+table.insert(walls, {32, 112})
+table.insert(walls, {48, 112})
+table.insert(walls, {64, 112})
+table.insert(walls, {80, 112})
 table.insert(walls, {96, 112})
 table.insert(walls, {112, 112})
 table.insert(walls, {128, 112})
@@ -8,4 +13,10 @@ table.insert(walls, {144, 112})
 table.insert(walls, {160, 112})
 table.insert(walls, {176, 112})
 table.insert(walls, {192, 112})
-table.insert(walls, {192, 96})
+table.insert(walls, {208, 112})
+table.insert(walls, {224, 112})
+table.insert(walls, {240, 112})
+table.insert(walls, {256, 112})
+table.insert(walls, {272, 112})
+table.insert(walls, {288, 112})
+table.insert(walls, {304, 112})

@@ -73,10 +73,10 @@ function variables()
 
 	blocksize = 16
 
-	walls = {}
+	walls = {} -- x, y
 	bullets = {} -- x, y, dir
-	mushes = {} -- x, y, dir
-	orbs = {}
+	mushes = {} -- x, y, dir, gravity
+	orbs = {} -- x, y
 
 	ash = {}
 	ash.x = 0
@@ -126,8 +126,10 @@ function logic(dt)
 			if player.y <= wall[2]+blocksize and player.y+blocksize >= wall[2]-1 then
 				player.touchesGround = true
 				player.jumpCount = 0
-			elseif player.y < wall[2] then
+
+			elseif player.y <= wall[2] then
 				player.touchesGround = false
+
 			end
 
 		-- Wall Collisions: 
@@ -137,29 +139,44 @@ function logic(dt)
 		end
 		-- Some more Wall Collisions:
 		if player.y+blocksize >= wall[2] and player.y < wall[2]+blocksize then
-			-- print("woo wooo woo")
+
 			if player.x+blocksize >= wall[1] and player.x+blocksize < wall[1]+blocksize then
-				-- print("BOOYAH!!!")
 				player.x = player.x - player.speed * dt
+
 			elseif player.x <= wall[1]+blocksize+1 and player.x > wall[1] then
-				-- print("NOM NOM NOM NOM NOM NOM ")
 				player.x = player.x + player.speed * dt
+
 			end
 		end
 	end
 
 	for each, mush in pairs(mushes) do
+
+		-- collsions:
 		for each, wall in pairs(walls) do
 			if mush[2]+blocksize >= wall[2] and mush[2] < wall[2]+blocksize then
-				-- print("woo wooo woo")
 				if wall[1]+blocksize >= wall[1] and wall[1]+blocksize < wall[1]+blocksize then
-					-- print("BOOYAH!!!")
 					mush[3] = "left"
 				elseif wall[1] <= wall[1]+blocksize+1 and wall[1] > wall[1] then
-					-- print("NOM NOM NOM NOM NOM NOM ")
 					mush[3] = "right"
 				end
 			end
+		end
+
+		-- gravity:
+		if wall[1] <= mush[1]+blocksize and wall[1]+blocksize >= mush[1] then
+			if mush[2] <= wall[2]+blocksize and mush[2]+blocksize >= wall[2]-1 then
+				mush[2] = mush[2] + 70 * dt
+			-- elseif mush[2] < wall[2] then
+			-- 	mush[4] = false
+			end
+		end
+
+		-- movement:
+		if mush[3] == "right" then
+			mush[1] = mush[1] + (player.speed/1.5) * dt
+		elseif mush[3] == "left" then
+			mush[1] = mush[1] + (player.speed/1.5) * dt
 		end
 	end
 
@@ -177,5 +194,3 @@ function logic(dt)
 	end
 
 end
-
--- BE RIGHT BACK!
