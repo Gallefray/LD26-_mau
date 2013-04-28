@@ -33,7 +33,9 @@ function resources()
 	orb1 = love.graphics.newImage(pImg .. "orb1.png")
 	orb1:setFilter("nearest", "nearest")
 
-	
+	-- Sound Effects:
+	pew = love.audio.newSource(pSnd .. "pew.ogg", "static")
+	coin = love.audio.newSource(pSnd .. "coin.ogg", "static")
 
 
 end
@@ -81,10 +83,12 @@ function love.update(dt)
 					table.insert(bullets, {x, y, "right"})
 					bulletShot = true
 					print("PEW!")
+					love.audio.play(pew)
 				elseif player.left == true then
 					table.insert(bullets, {x, y, "left"})
 					bulletShot = true
 					print("PEW!")
+					love.audio.play(pew)
 				end
 			end 
 		end
@@ -123,7 +127,7 @@ function variables()
 	player = {}
 	player.x = screen.w/2
 	player.y = screen.h/2
-	player.h = 14
+	player.h = 16
 	player.w = 8
 	player.speed = 75
 	player.jump = false
@@ -217,7 +221,7 @@ function logic(dt)
 	for each, wall in pairs(walls) do
 		if wall[1] <= player.x+player.w and wall[1]+blocksize >= player.x then
 			-- Gravity Stuff:
-			if player.y <= wall[2]+blocksize and player.y+player.h >= wall[2]-1 then
+			if player.y <= wall[2]+blocksize and player.y+player.h >= wall[2] then
 				player.touchesGround = true
 				player.jumpCount = 0
 
@@ -325,6 +329,7 @@ function logic(dt)
 					print("health: " .. player.health)
 				end
 				table.remove(orbs, each)
+				love.audio.play(coin)
 			end
 		end
 	end

@@ -97,8 +97,8 @@ function editorDraw()
 		love.graphics.draw(wall1, tex[1], tex[2])
 	end
 
-	for each, mush in pairs(editMushes) do
-		love.graphics.draw(mush0, tex[1], tex[2])
+	for each, mush in pairs(editMushes) do 
+		love.graphics.draw(mush0, mush[1], mush[2])
 	end
 
 	for each, orb in pairs(editOrbs) do
@@ -128,7 +128,7 @@ function editorVar()
 	editTex = {} -- tex, x, y
 
 	selected = 1
-	maxSel = 4
+	maxSel = 5
 
 	counter = 0
 	scrollInterval = 1
@@ -176,6 +176,9 @@ function save(file)
 	end
 	for each, orb in pairs(editOrbs) do
 		saveLvl:write("table.insert(orbs, {" .. orb[1] .. ", " .. orb[2] .. "})\n")
+	end
+	for each, tex in pairs(editTex) do
+		saveLvl:write("table.insert(textile, {" .. tex[1] .. ", " .. tex[2] .. "})\n")
 	end
 	print("DONE!")
 	saveLvl:close()
