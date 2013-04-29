@@ -49,6 +49,41 @@ function editorUpdate(dt)
 				table.insert(editPos, {x, y})
 			end
 		end
+	elseif love.keyboard.isDown("r") then
+		local x = mouse.gx
+		local y = mouse.gy
+
+		for each, pos in pairs(editPos) do
+			if pos[1] == x and pos[2] == y then
+				table.remove(editPos, pos)
+			end
+		end
+
+		if editPlayer.x == x and editPlayer.y == y then
+			editPlayer.x = 0
+			editPlayer.y = 0
+		end
+
+		for each, ent in pairs(editWalls) do 
+			if ent[1] == x and ent[2] == y then
+				table.remove(editWalls, ent)
+			end
+		end
+		for each, ent in pairs(editMushes) do 
+			if ent[1] == x and ent[2] == y then
+				table.remove(editMushes, ent)
+			end
+		end
+		for each, ent in pairs(editOrbs) do 
+			if ent[1] == x and ent[2] == y then
+				table.remove(editOrbs, ent)
+			end
+		end
+		for each, ent in pairs(editTex) do 
+			if ent[1] == x and ent[2] == y then
+				table.remove(editTex, ent)
+			end
+		end
 	end
 	if love.keyboard.isDown("d") then -- Thanks to wzl for this:
 		counter = counter + 5 * dt

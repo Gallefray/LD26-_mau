@@ -66,9 +66,6 @@ function love.update(dt)
 			screen.transX = screen.transX - (player.speed*2.5) * dt
 			player.right = true
 			player.left = false
-		-- else
-		-- 	player.left = false
-		-- 	player.right = false
 		end
 		if love.keyboard.isDown("s") then
 			if player.touchesGround == true then
@@ -110,6 +107,7 @@ function love.draw()
 		loadEnt()
 		drawEnts()
 		love.graphics.pop()
+		gameHUD()
 	end
 end
 
@@ -186,7 +184,15 @@ function drawEnts()
 	for each, tex in pairs(textile) do
 		love.graphics.draw(wall1, tex[1], tex[2])
 	end
+end
 
+function gameHUD()
+	local distX = 16
+	for i = 0, player.health do	
+		love.graphics.setColor(255, 0, 0)
+		love.graphics.rectangle("fill", distX, 32, 16, 16)
+		distX = distX + 32
+	end 
 end
 
 function loadEnt()
