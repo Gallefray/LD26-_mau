@@ -58,12 +58,12 @@ function love.update(dt)
 	if level == 1 then
 		if love.keyboard.isDown("left") then
 			player.x = player.x - player.speed * dt
-			screen.transX = screen.transX + (player.speed*2.5) * dt
+			-- screen.transX = screen.transX + (player.speed*2.5) * dt
 			player.left = true
 			player.right = false
 		elseif love.keyboard.isDown("right") then 
 			player.x = player.x + player.speed * dt
-			screen.transX = screen.transX - (player.speed*2.5) * dt
+			-- screen.transX = screen.transX - (player.speed*2.5) * dt
 			player.right = true
 			player.left = false
 		end
@@ -100,8 +100,14 @@ function love.draw()
 	love.graphics.push()
 	love.graphics.translate(screen.transX, screen.transY)
 	love.graphics.scale(screen.scale, screen.scale)
-	if level == -0 then
+	if level == -2 then -- Win screen 
+		love.graphics.pop()
+	elseif level == -1 then -- Death screen
+		love.graphics.pop()
+	elseif level == -0 then
 		editorDraw()
+		love.graphics.pop()
+	elseif level == 0 then
 		love.graphics.pop()
 	elseif level == 1 then
 		loadEnt()
@@ -227,7 +233,7 @@ function logic(dt)
 	for each, wall in pairs(walls) do
 		if wall[1] <= player.x+player.w and wall[1]+blocksize >= player.x then
 			-- Gravity Stuff:
-			if player.y <= wall[2]+blocksize and player.y+player.h >= wall[2] then
+			if player.y <= wall[2]+blocksize/4 and player.y+player.h >= wall[2] then
 				player.touchesGround = true
 				player.jumpCount = 0
 
@@ -235,21 +241,31 @@ function logic(dt)
 				player.touchesGround = false
 
 			end
-
-		-- Wall Collisions: 
-			if player.y <= wall[2]+blocksize and player.y >= wall[2] then
-				player.jump = false
-			end
 		end
 		-- Some more Wall Collisions:
 		-- (left | right)
-		if player.y+player.h >= wall[2] and player.y < wall[2]+blocksize then
-			if player.x+player.w >= wall[1] and player.x+player.w < wall[1]+blocksize then
-				player.x = player.x - player.speed * dt
+		-- if player.y+player.h >= wall[2] and player.y < wall[2]+blocksize then
+		-- 	if player.x+player.w >= wall[1] and player.x+player.w < wall[1]+blocksize then
+		-- 		player.x = player.x - player.speed * dt
 
-			elseif player.x <= wall[1]+blocksize+1 and player.x > wall[1] then
-				player.x = player.x + player.speed * dt
+		-- 	elseif player.x <= wall[1]+blocksize/5 and player.x+player.w > wall[1] then
+		-- 		player.x = player.x + player.speed * dt
 
+		-- 	end
+		-- end
+		if player.x+player.w > wall[1] and player.x+player.w < wall[1]+16 then
+			print("FIRST IF IS TRUE")
+			if player.y+player.h/2 == wall[2] then
+				print("SECOND IF IS TRUE")
+				if player.x+player.w/2 > wall[1]+8 then
+					print("working == right")
+					player.x = player.x + player.speed
+					screen.transX = screen.transX - player.speed*2
+				elseif player.x+player.w/2 < wall[1]+8 then
+					print("working == left")
+					player.x = player.x - player.speed
+					screen.transX = screen.transX + player.speed*2
+				end
 			end
 		end
 	end

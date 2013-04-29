@@ -49,7 +49,7 @@ function editorUpdate(dt)
 				table.insert(editPos, {x, y})
 			end
 		end
-	elseif love.keyboard.isDown("r") then
+	elseif love.mouse.isDown("r") then
 		local x = mouse.gx
 		local y = mouse.gy
 
@@ -115,6 +115,18 @@ function editorUpdate(dt)
 			save(editLevel)
 		end
 	end
+
+	if selected == 1 then
+		selectText = "player"
+	elseif selected == 2 then
+		selectText = "wall"
+	elseif selected == 3 then
+		selectText = "mush"
+	elseif selected == 4 then
+		selectText = "orb"
+	else
+		selectText = "texture"
+	end
 end
 
 function editorDraw()
@@ -140,8 +152,12 @@ function editorDraw()
 		love.graphics.draw(orb1, orb[1], orb[2])
 	end
 
-	print("selection: " .. selected)
-	
+	-- print("selection: " .. selected)
+end
+
+function editHUD()
+	love.graphics.setColor(255, 255, 255)
+	love.graphics.print()
 end
 
 function editorVar()
@@ -163,6 +179,7 @@ function editorVar()
 	editTex = {} -- tex, x, y
 
 	selected = 1
+	selectText = "player"
 	maxSel = 5
 
 	counter = 0
